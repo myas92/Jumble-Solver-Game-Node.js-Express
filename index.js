@@ -1,5 +1,6 @@
+require('dotenv').config();
 const express = require('express');
-const pool = require('./database');
+const pool = require('./config/database');
 const app = express();
 const format = require('pg-format');
 
