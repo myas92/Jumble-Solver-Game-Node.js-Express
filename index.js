@@ -9,20 +9,20 @@ app.get('/api/search', async (req, res) => {
     const { letter } = req.query;
     let validWords = process(letter)
     try {
+        // process word list to create query
         const updatedValidwords = JSON.stringify(validWords).replace("[", "").replace("]", "").replaceAll("\"", "\'")
-        let query = format(`Select word from dictionary
+        const query = format(`Select word from dictionary
         where sorted_word IN (${updatedValidwords})
         Order By length(word) desc`);
-        let findedWords = await pool.query(query);
-        res.send({ data: findedWords.rows })
+        const { rows } = await pool.query(query);
+        const response = createBeautyResponse(rows)
+        res.send({ data: response })
     }
     catch (error) {
         throw new Error(error.message)
     }
 })
 
-let wordsList = [];
-let currentWord = [];
 /**
  * Proccess function Create a Tree and travisal tree to find valid posible words
  * @param {*} letter 
@@ -64,6 +64,8 @@ function createTree(word) {
  * @param {object} data 
  * @returns 
  */
+let wordsList = [];
+let currentWord = [];
 const treeTraversal = (data) => {
     if (data.childrens.length > 0) {
         currentWord.push(data.title)
@@ -83,6 +85,19 @@ const treeTraversal = (data) => {
     }
 };
 
+
+function createBeautyResponse(foundedWords){
+    let lengthObj = foundedWords.reduce((acc, {word}) => {
+      const lengthKey = `len${word.length}`
+      if (acc[lengthKey]) {
+        acc[lengthKey].push(word)
+      } else {
+        acc[lengthKey] = [word];
+      }
+      return acc;
+    }, {});
+    return lengthObj
+}
 
 app.listen(3000, () => {
     console.log('Listening on port 3000');
