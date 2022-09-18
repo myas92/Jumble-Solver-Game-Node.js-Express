@@ -31,12 +31,12 @@ app.get('/api/search', async (req, res) => {
 function process(letter) {
     const splitedWord = letter.split("").sort()
     let tree = createTree(splitedWord);
-    let iTree = []
-    iTree.push(tree)
+    let leftNode = []
+    leftNode.push(tree)
     let toool = tree.childrens.length;
     for (let i = 1; i < toool; i++) {
-        treeTraversal(iTree[0]);
-        iTree[0] = iTree[0].childrens[0]
+        treeTraversal(leftNode[0]);
+        leftNode[0] = leftNode[0].childrens[0]
     }
     wordsList = [...new Set(wordsList)];
     const validWordsList = wordsList.filter(word => word.length > 1)
