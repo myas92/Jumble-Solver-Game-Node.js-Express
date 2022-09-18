@@ -30,9 +30,14 @@ app.get('/api/search', async (req, res) => {
  */
 function process(letter) {
     const splitedWord = letter.split("").sort()
-    const tree = createTree(splitedWord);
-
-    treeTraversal(tree);
+    let tree = createTree(splitedWord);
+    let iTree = []
+    iTree.push(tree)
+    let toool = tree.childrens.length;
+    for (let i = 1; i < toool; i++) {
+        treeTraversal(iTree[0]);
+        iTree[0] = iTree[0].childrens[0]
+    }
     wordsList = [...new Set(wordsList)];
     const validWordsList = wordsList.filter(word => word.length > 1)
     wordsList = []; // Reset wordlist 
@@ -86,15 +91,15 @@ const treeTraversal = (data) => {
 };
 
 
-function createBeautyResponse(foundedWords){
-    let lengthObj = foundedWords.reduce((acc, {word}) => {
-      const lengthKey = `len${word.length}`
-      if (acc[lengthKey]) {
-        acc[lengthKey].push(word)
-      } else {
-        acc[lengthKey] = [word];
-      }
-      return acc;
+function createBeautyResponse(foundedWords) {
+    let lengthObj = foundedWords.reduce((acc, { word }) => {
+        const lengthKey = `len${word.length}`
+        if (acc[lengthKey]) {
+            acc[lengthKey].push(word)
+        } else {
+            acc[lengthKey] = [word];
+        }
+        return acc;
     }, {});
     return lengthObj
 }
