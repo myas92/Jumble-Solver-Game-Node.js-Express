@@ -1,4 +1,4 @@
-const pool = require('./database');
+const pool = require('./config/database');
 const format = require('pg-format');
 /**
  * Read words_dictionary.json file and store into database (word and Stored_word)
